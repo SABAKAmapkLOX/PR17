@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,21 +15,80 @@ using System.Windows.Shapes;
 
 namespace PR17
 {
-    /// <summary>
-    /// Логика взаимодействия для AddItemDataGrid.xaml
-    /// </summary>
+    public class Data
+    {
+        public static Student? student;
+    }
+    
     public partial class AddItemDataGrid : Window
     {
+        StudentContext _db = new StudentContext ();
+        Student _student;
+        
         public AddItemDataGrid()
         {
             InitializeComponent();
-            Student student = new Student(); 
-            student.ChivetVobchaga=boolChivetVObchaga.IsChecked;
-            student.Math=boolMath.IsChecked;
-            student.History=boolHistory.IsChecked;
-            student.PhysicalEdication=boolPhysicalEdication.IsChecked;
-            student.Informatic=boolInformatic.IsChecked;
-            student.English=boolEnglish.IsChecked;
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Data.student == null)
+            {
+                this.Title = "Добавление записи";
+                btnAddItem.Content = "Добавить";
+                _student = new Student();
+            }
+            else
+            {
+                this.Title = "Редактирование записи";
+                btnAddItem.Content = "Изменить";
+                _student = new Student();
+            }
+            this.DataContext = _student;
+        }
+
+        private void btnAddItem_Click(object sender, RoutedEventArgs e)
+        {
+            StringBuilder error = new StringBuilder();
+            
+            if (tbId.Text.Length == 0 || int.TryParse(tbId.Text, out int Id) == false) error.AppendLine("Введите id");
+            if (tbFamilia.Text.Length == 0 || tbFamilia.Text.Length >= 50) error.AppendLine("Введите Фамилию");
+            if (tbIma.Text.Length == 0 || tbIma.Text.Length >= 50) error.AppendLine("Введите Имя");
+            if (tbOtchestvo.Text.Length == 0 || tbOtchestvo.Text.Length >= 50) error.AppendLine("Введите Отчество");
+            if (tbIdZachetnoKnigi.Text.Length == 0 || int.TryParse(tbIdZachetnoKnigi.Text, out int IdKnigi) == false) error.AppendLine("Введите id зачетной книги");
+            if (tbIdGruppa.Text.Length == 0 || int.TryParse(tbIdGruppa.Text, out int IdGruppa) == false) error.AppendLine("Введите id группы");
+            _student.ChivetVobchaga = boolChivetVObchaga.IsChecked;
+            _student.Math = boolMath.IsChecked;
+            _student.History = boolHistory.IsChecked;
+            _student.PhysicalEdication = boolPhysicalEdication.IsChecked;
+            _student.Informatic = boolInformatic.IsChecked;
+            _student.English = boolEnglish.IsChecked;
+
+            if (error.Length > 0)
+            {
+                MessageBox.Show(error.ToString());
+                return;
+            }
+
+            try
+            {
+                if (Data.student == null)
+                {
+                    _db.Students.Add(_student);
+                    _db.SaveChanges();
+                }
+                else _db.SaveChanges();
+                MessageBox.Show("Все хорошо");
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -20,12 +20,26 @@ namespace PR17
         {
             InitializeComponent();
         }
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var s = sender as MenuItem;
+            switch(s.Header)
+            {
+                case "Добавить":
+                    AddItem();
+                    break;
+                case "Редактировать":
+                    EditItem(); 
+                    break;
+                case "Удалить":
+                    DelItem();
+                    break;
+            }
+        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadDBInDataGrid();
-            AddItemDataGrid add = new AddItemDataGrid();
-            add.ShowDialog();
         }
 
         private void LoadDBInDataGrid()
@@ -42,6 +56,51 @@ namespace PR17
                 }
                 dataGrid.Focus();
             }
+        }
+
+        private void AddItem()
+        {
+            Data.student = null;
+            AddItemDataGrid addItem = new AddItemDataGrid();
+            addItem.Owner = this;
+            addItem.ShowDialog();
+            LoadDBInDataGrid();
+        }
+        
+        private void EditItem()
+        {
+            Data.student = (Student)dataGrid.SelectedItem;
+            AddItemDataGrid editItem = new AddItemDataGrid();
+            editItem.Owner = this;
+            editItem.ShowDialog();
+            LoadDBInDataGrid();
+        }
+
+        private void DelItem()
+        {
+            MessageBoxResult result;
+            result = MessageBox.Show("Удалить Запись?"," Удаление записи", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Student row = (Student)dataGrid.SelectedItem;
+                    if (row != null)
+                    {
+
+                        using (StudentContext _db = new StudentContext())
+                        {
+                            _db.Students.Remove(row);
+                            _db.SaveChanges();
+                        }
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Ошибка удаления");
+                }
+            }
+            else dataGrid.Focus();
         }
     }
 }
