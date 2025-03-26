@@ -9,6 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Menu>
@@ -23,5 +24,20 @@
                 <DataGrid IsReadOnly="True" x:Name="dataGrid"/>
             </StackPanel>
         </GroupBox>
+        
+        <StackPanel Grid.Row="2" HorizontalAlignment="Left" Orientation="Horizontal">
+            <GroupBox Header="Поиск по Фамилии">
+                <StackPanel>
+                    <TextBox x:Name="tbFind" Margin="5"/>
+                    <Button Content="Найти" Margin="5" Click="Button_Click"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Фильтрация по фамилии">
+                <StackPanel>
+                    <TextBox x:Name="tbFindFilter" Margin="5"/>
+                    <Button Content="Фильтр" Click="Button_Click" Margin="5"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
     </Grid>
 </Window>

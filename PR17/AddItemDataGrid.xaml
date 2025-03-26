@@ -5,11 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PR17"
         mc:Ignorable="d"
-        Title="AddItemDataGrid" Height="650" Width="200">
+        Title="AddItemDataGrid" Height="650" Width="200" Loaded="Window_Loaded">
     <Grid>
         <StackPanel Margin="5" HorizontalAlignment="Center">
-            <Label Content="id" Margin="1"/>
-            <TextBox Margin="1" Text="{Binding Path=Id}" Name="tbId"/>
             <Label Content="Familia" Margin="1"/>
             <TextBox Margin="1" Text="{Binding Path=Familia}" Name="tbFamilia"/>
             <Label Content="Ima" Margin="1"/>

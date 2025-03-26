@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -37,6 +38,21 @@ namespace PR17
             }
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var s = sender as Button;
+            switch(s.Content)
+            {
+                case "Найти":
+                    Find();
+                    break;
+                case "Фильтр":
+                    Find();
+                    break;
+            }
+        }
+
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadDBInDataGrid();
@@ -44,10 +60,10 @@ namespace PR17
 
         private void LoadDBInDataGrid()
         {
-            using (StudentContext _db = new StudentContext())
+            using (StudentContext _db = new StudentContext())//Контекст
             {
                 int selectedIndex = dataGrid.SelectedIndex;
-                dataGrid.ItemsSource = _db.Students.ToList();
+                dataGrid.ItemsSource = _db.Students.ToList();//Привязываем 
                 if (selectedIndex != -1)
                 {
                     if (selectedIndex == dataGrid.Items.Count) selectedIndex--;
@@ -92,6 +108,7 @@ namespace PR17
                         {
                             _db.Students.Remove(row);
                             _db.SaveChanges();
+                            LoadDBInDataGrid();
                         }
                     }
                 }
@@ -101,6 +118,35 @@ namespace PR17
                 }
             }
             else dataGrid.Focus();
+        }
+
+        private void Find()
+        {
+            //Получаем коллекцию элементов из dataGrid
+            List<Student> listItem = (List<Student>)dataGrid.ItemsSource;
+            //Используем метод Whee для фильтрации по заданному критерию 
+            var filtered = listItem.Where(p => p.Familia.Contains(tbFind.Text));
+            if (filtered.Count() > 0)
+            {
+                var item = filtered.First();
+                dataGrid.SelectedItem = item;
+                dataGrid.ScrollIntoView(item);
+                dataGrid.Focus();
+            }
+            else MessageBox.Show("Нету");
+        }
+
+        private void Filter()
+        {
+            if (tbFindFilter.Text.IsNullOrEmpty() == false)
+            {
+                using (StudentContext _db = new StudentContext())
+                {
+                    var filter = _db.Students.Where(p => p.Familia == tbFindFilter.Text);
+                    dataGrid.ItemsSource = filter.ToList();
+                }
+            }
+            else LoadDBInDataGrid();
         }
     }
 }

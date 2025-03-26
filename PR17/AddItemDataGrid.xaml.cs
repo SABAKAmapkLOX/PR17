@@ -41,7 +41,7 @@ namespace PR17
             {
                 this.Title = "Редактирование записи";
                 btnAddItem.Content = "Изменить";
-                _student = new Student();
+                _student = _db.Students.Find(Data.student.Id);
             }
             this.DataContext = _student;
         }
@@ -50,12 +50,14 @@ namespace PR17
         {
             StringBuilder error = new StringBuilder();
             
-            if (tbId.Text.Length == 0 || int.TryParse(tbId.Text, out int Id) == false) error.AppendLine("Введите id");
+            //проверки всякие
             if (tbFamilia.Text.Length == 0 || tbFamilia.Text.Length >= 50) error.AppendLine("Введите Фамилию");
             if (tbIma.Text.Length == 0 || tbIma.Text.Length >= 50) error.AppendLine("Введите Имя");
             if (tbOtchestvo.Text.Length == 0 || tbOtchestvo.Text.Length >= 50) error.AppendLine("Введите Отчество");
             if (tbIdZachetnoKnigi.Text.Length == 0 || int.TryParse(tbIdZachetnoKnigi.Text, out int IdKnigi) == false) error.AppendLine("Введите id зачетной книги");
             if (tbIdGruppa.Text.Length == 0 || int.TryParse(tbIdGruppa.Text, out int IdGruppa) == false) error.AppendLine("Введите id группы");
+
+            //Это для CheckBox что бы он записывал в БД True или False
             _student.ChivetVobchaga = boolChivetVObchaga.IsChecked;
             _student.Math = boolMath.IsChecked;
             _student.History = boolHistory.IsChecked;
@@ -63,11 +65,13 @@ namespace PR17
             _student.Informatic = boolInformatic.IsChecked;
             _student.English = boolEnglish.IsChecked;
 
+            //Если есть ошибки то выводим MessageBox и не сохраняем
             if (error.Length > 0)
             {
                 MessageBox.Show(error.ToString());
                 return;
             }
+
 
             try
             {
@@ -76,7 +80,11 @@ namespace PR17
                     _db.Students.Add(_student);
                     _db.SaveChanges();
                 }
-                else _db.SaveChanges();
+                else
+                {
+                    
+                    _db.SaveChanges();
+                }
                 MessageBox.Show("Все хорошо");
                 this.Close();
             }
