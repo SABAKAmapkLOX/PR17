@@ -45,9 +45,9 @@ namespace PR17
             {
                 case "Найти":
                     Find();
-                    break;
+                    break;ё
                 case "Фильтр":
-                    Find();
+                    Filter();
                     break;
             }
         }
@@ -94,30 +94,33 @@ namespace PR17
 
         private void DelItem()
         {
-            MessageBoxResult result;
-            result = MessageBox.Show("Удалить Запись?"," Удаление записи", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (result == MessageBoxResult.Yes)
+            if (dataGrid.SelectedItem != null)
             {
-                try
+                MessageBoxResult result;
+                result = MessageBox.Show("Удалить Запись?"," Удаление записи", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
                 {
-                    Student row = (Student)dataGrid.SelectedItem;
-                    if (row != null)
+                    try
                     {
-
-                        using (StudentContext _db = new StudentContext())
+                        Student row = (Student)dataGrid.SelectedItem;
+                        if (row != null)
                         {
-                            _db.Students.Remove(row);
-                            _db.SaveChanges();
-                            LoadDBInDataGrid();
+                            using (StudentContext _db = new StudentContext())
+                            {
+                                _db.Students.Remove(row);
+                                _db.SaveChanges();
+                                LoadDBInDataGrid();
+                            }
                         }
                     }
+                    catch
+                    {
+                        MessageBox.Show("Ошибка удаления");
+                    }
                 }
-                catch
-                {
-                    MessageBox.Show("Ошибка удаления");
-                }
+                else dataGrid.Focus();
             }
-            else dataGrid.Focus();
+            else MessageBox.Show("Выбери запись");
         }
 
         private void Find()
